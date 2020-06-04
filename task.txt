@@ -1,0 +1,4 @@
+Define if a move is valid.  8 queens must be on the board,
+and no queen can be able to attack another one.
+
+Finish solving algorithm by tomorrow 6/2.
