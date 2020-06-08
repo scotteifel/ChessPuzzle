@@ -11,152 +11,142 @@ board = [
           [0,0,0,0,0,0,0,0],
           [0,0,0,0,0,0,0,0],
 ]
-
-def solve(b):
-
-    if not find(b):
-        r,c = 0,0
-
+##store spaces queen cannot have
+not_poss = []
+global xz
+xz = 0
+def solve(b,r):
+    print("running solve")
+    global xz
     #check for base case
     queen_total = 0
     for row in b:
         queen_total += row.count(1)
     if queen_total == 8:
+        print("Correct amount of queens")
         return True
 
-    print_board(b)
-    time.sleep(2)
+    time.sleep(1)
 
-
-
-    print("\n","Value of row is : ",r)
-    print("Value of column : ",c)
-    print('\n\n')
     #Iterating through board.
-    if valid(b, (r,c)):
-        b[r][c] = 1
-        #End of the row
-        r+=1
-        if valid(b,(r,c+2)):
-            b[r][c+2] = 1
-            c += 2
-        else:
-            b[r][c-2] = 1
-            c -= 2
+    for _ in range(8):
 
-    else:
+
+        if not invalid(b, (r,_)):
+            print("Not invalid", r,_)
+            print(not_poss)
+
+            if (r,_) not in not_poss:
+                b[r][_] = 1
+                print('\n\n\n')
+                print_board(b)
+                print('\n\n\n')
+                r += 1
+                solve(b,r)
+
         #Look for previous queen space and remove queen
-        r,c = find(b)
-        b[r][c] = 0
+    # r,c = find(b)
+    # for row in b:
+    #     if 1 not in row:
+    #         primary_q.append((r,c))
+    #         solve(b,r)
+    # not_poss.append((r,c))
+    # b[r][c] = 0
+    not_poss.append((0,xz))
+    xz+=1
+    b = [
+              [0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0],
+    ]
+    r=0
+    return solve(b,r)
 
-    solve(b)
+
 
 
 ####Check if space can have a queen in it
-def valid(b, ans):
+def invalid(b, ans):
     row,col = ans
-    print("Row is ",ans[0])
-    print("Column is ",ans[1])
 
     # check row
-    for num in b[row]:
-        if num == 1:
-            return False
+    # for num in b[row]:
+    #     if num == 1:
+    #         return True
 
     # check column
-    list = [x[col] for x in b]
-    if 1 in list:
-        print("False 2")
-        return False
-
+    for x in b:
+        if x[col] == 1:
+                return True
     ##### check diagonal #####
     #check if point is top left
     if row == 0 and col == 0:
         y = 1
         for _ in range(1,8):
             if b[_][y] == 1:
-                print("False 3")
-                return False
+                return True
 
             y += 1
-
     #point top right of board
     if row == 0 and col == 7:
         y = 6
         for _ in range(1,8):
             if b[_][y] == 1:
-                print("False 4")
-                return False
+                return True
 
             y -= 1
-
     #bottom right of board
     if row and col == 7:
         y = 6
         for _ in range(6,-1,-1):
             if b[_][y] == 1:
-                print("False 5")
-                return False
+                return True
 
             y -= 1
-
     #bottom left
+
     if row == 7 and col == 0:
         y = 1
         for _ in range(6,-1,-1):
             if b[_][y] == 1:
-                print("False 6")
-                return False
+                return True
 
             y += 1
 
     if row == 0:
-        if not downwards_diagonals(col):
-            return False
+        if downwards_diagonals(b,col):
+            return True
+
 
     if row == 7:
-        if not upwards_diagonals(col):
-            return False
+        if upwards_diagonals(b,col):
+            return True
 
     ##Going row by row, checking upwards and downwards diagonals.
     upwards = row-1
+    if upwards != -1:
+        if upwards_diagonals(b, col,lowest=upwards):
+            return True
+
+
     downwards = row+1
+    if downwards != 7:
 
-    if not upwards_diagonals(col,lowest=upwards):
-        return False
+        if downwards_diagonals(b, col,highest=downwards):
+            return True
 
-    if not downwards_diagonals(col,highest=downwards):
-        return False
-
-    return True
+    return False
 
 
 ####use variables to span out for the diagonal search.####
-#downwards seeks diagonals going down
-def downwards_diagonals(column, highest=1):
-        #variables will count both to the right and left
-        l_bound = column
-        r_bound = column
-        #count rows moving downwards starting at row below current row
-        for _ in range(highest,8):
-            ##Using try/except to stop loop when a coord reaches end of board
-            print("TRYING")
-            try:
-                if b[_][r_bound+1] == 1:
-                    return False
-            except:
-                continue
-            try:
-                if b[_][l_bound-1] == 1:
-                    return False
-            except:
-                continue
-            r_bound += 1
-            l_bound -= 1
-        return True
 
-#upwards seeks diagonals going up
-def upwards_diagonals(column, lowest=6):
+#seeks diagonals going up
+def upwards_diagonals(b, column, lowest=6):
         #variables will count both to right and to left
         r_bound = column
         l_bound = column
@@ -164,24 +154,49 @@ def upwards_diagonals(column, lowest=6):
         for _ in range(lowest,-1,-1):
             try:
                 if b[_][r_bound+1] == 1:
-                    return False
+                    return True
+            except:
+                pass
+            r_bound += 1
+        for _ in range(lowest,-1,-1):
+            try:
+                if b[_][l_bound-1] == 1:
+                    return True
+            except:
+                pass
+            l_bound -= 1
+        return False
+
+
+#seeks diagonals going down
+def downwards_diagonals(b, column, highest=1):
+        #variables will count both to the right and left
+        l_bound = column
+        r_bound = column
+        #count rows moving downwards starting at row below current row
+        for _ in range(highest,8):
+            ##Using try/except to stop loop when a coord side end of board
+            try:
+                if b[_][r_bound+1] == 1:
+                    return True
             except:
                 continue
             try:
                 if b[_][l_bound-1] == 1:
-                    return False
+                    return True
             except:
                 continue
             r_bound += 1
             l_bound -= 1
-        return True
+        return False
+
+
 
 
 def find(b):
     for x in range(8):
         for y in range(8):
             if b[x][y] == 1:
-                print("Returning x and y",x,", ",y)
                 return (x,y)
 
 
@@ -190,5 +205,5 @@ def print_board(b):
     for row in b:
         print(row)
 
-solve(board)
+solve(board,0)
 print_board(board)
