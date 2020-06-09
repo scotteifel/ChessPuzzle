@@ -1,5 +1,4 @@
 import time
-
 #Chessboard
 board = [
           [0,0,0,0,0,0,0,0],
@@ -30,19 +29,32 @@ def solve(b,r):
 
     #Iterating through board.
     for _ in range(8):
-
+        neg = []
 
         if not invalid(b, (r,_)):
             print("Not invalid", r,_)
             print(not_poss)
 
-            if (r,_) not in not_poss:
+            if (r,_) not in not_poss and (r,_) not in neg:
                 b[r][_] = 1
                 print('\n\n\n')
                 print_board(b)
                 print('\n\n\n')
                 r += 1
                 solve(b,r)
+        else:
+            if r == 0:
+                not_poss.append((0,xz))
+                xz += 1
+
+                solve(b,r)
+            else:
+                x,y = find(b)
+                b[x][y] = 0
+                neg.append((x,y))
+                solve(b,r-1)
+
+        print("here")
 
         #Look for previous queen space and remove queen
     # r,c = find(b)
@@ -52,20 +64,9 @@ def solve(b,r):
     #         solve(b,r)
     # not_poss.append((r,c))
     # b[r][c] = 0
-    not_poss.append((0,xz))
-    xz+=1
-    b = [
-              [0,0,0,0,0,0,0,0],
-              [0,0,0,0,0,0,0,0],
-              [0,0,0,0,0,0,0,0],
-              [0,0,0,0,0,0,0,0],
-              [0,0,0,0,0,0,0,0],
-              [0,0,0,0,0,0,0,0],
-              [0,0,0,0,0,0,0,0],
-              [0,0,0,0,0,0,0,0],
-    ]
-    r=0
-    return solve(b,r)
+
+
+    return True
 
 
 
