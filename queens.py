@@ -11,12 +11,18 @@ board = [
           [0,0,0,0,0,0,0,0],
 ]
 ##store spaces queen cannot have
-not_poss = []
 global xz
+global neg
+global top
+top = []
 xz = 0
+neg = []
+
 def solve(b,r):
-    print("running solve")
+    print("Solving")
     global xz
+    global neg
+    global top
     #check for base case
     queen_total = 0
     for row in b:
@@ -24,37 +30,44 @@ def solve(b,r):
     if queen_total == 8:
         print("Correct amount of queens")
         return True
+    print(queen_total, " queens")
 
     time.sleep(1)
 
     #Iterating through board.
     for _ in range(8):
-        neg = []
 
         if not invalid(b, (r,_)):
-            print("Not invalid", r,_)
-            print(not_poss)
+            print(neg, " is neg")
+            print(top, " is top")
 
-            if (r,_) not in not_poss and (r,_) not in neg:
+            if (r,_) not in top and (r,_) not in neg:
                 b[r][_] = 1
-                print('\n\n\n')
+                print('\n')
                 print_board(b)
-                print('\n\n\n')
+                print('\n')
                 r += 1
+                ##clear attempts except for lowest row.
+                for item in neg:
+                    if item[0] != r+1:
+                        neg.remove(item)
                 solve(b,r)
-        else:
-            if r == 0:
-                not_poss.append((0,xz))
-                xz += 1
 
-                solve(b,r)
-            else:
-                x,y = find(b)
-                b[x][y] = 0
-                neg.append((x,y))
-                solve(b,r-1)
+    if r == 1:
+        print("\n\n","R = 1")
+        top.append((0,xz))
+        xz += 1
+        ##Resetting lower rows to allow any space for a queen
+        neg = []
+        solve(b,0)
+    else:
+        x,y = find(b)
+        b[x][y] = 0
 
-        print("here")
+        neg.append((x,y))
+        solve(b,x)
+
+    print("here")
 
         #Look for previous queen space and remove queen
     # r,c = find(b)
@@ -195,8 +208,8 @@ def downwards_diagonals(b, column, highest=1):
 
 
 def find(b):
-    for x in range(8):
-        for y in range(8):
+    for x in range(7,-1,-1):
+        for y in range(7,-1,-1):
             if b[x][y] == 1:
                 return (x,y)
 
