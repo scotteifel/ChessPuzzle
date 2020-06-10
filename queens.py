@@ -13,49 +13,54 @@ board = [
 ##store spaces queen cannot have
 global xz
 global neg
-global top
-top = []
+global top_row
+top_row = []
 xz = 0
 neg = []
 
 def solve(b,r):
-    print("Solving")
     global xz
     global neg
-    global top
-    #check for base case
-    queen_total = 0
-    for row in b:
-        queen_total += row.count(1)
-    if queen_total == 8:
-        print("Correct amount of queens")
-        return True
-    print(queen_total, " queens")
+    global top_row
 
-    time.sleep(1)
+
 
     #Iterating through board.
     for _ in range(8):
 
         if not invalid(b, (r,_)):
-            print(neg, " is neg")
-            print(top, " is top")
 
-            if (r,_) not in top and (r,_) not in neg:
+            if (r,_) not in top_row and (r,_) not in neg:
                 b[r][_] = 1
-                print('\n')
-                print_board(b)
-                print('\n')
-                r += 1
+
                 ##clear attempts except for lowest row.
+
                 for item in neg:
-                    if item[0] != r+1:
+                    if item[0] <= r:
+                        continue
+                    else:
                         neg.remove(item)
+                    #check for base case
+                queen_total = 0
+                for row in b:
+                    queen_total += row.count(1)
+                if queen_total == 8:
+                    print("Correct amount of queens")
+                    print_board(b)
+                    print("Nice one!")
+                    return True
+                if queen_total == 7:
+                    print('\n')
+                    print_board(b)
+                    print('\n')
+                    print(r, " r is this")
+
+
+                r += 1
                 solve(b,r)
 
-    if r == 1:
-        print("\n\n","R = 1")
-        top.append((0,xz))
+    if r == 0:
+        top_row.append((0,xz))
         xz += 1
         ##Resetting lower rows to allow any space for a queen
         neg = []
@@ -67,36 +72,18 @@ def solve(b,r):
         neg.append((x,y))
         solve(b,x)
 
-    print("here")
-
-        #Look for previous queen space and remove queen
-    # r,c = find(b)
-    # for row in b:
-    #     if 1 not in row:
-    #         primary_q.append((r,c))
-    #         solve(b,r)
-    # not_poss.append((r,c))
-    # b[r][c] = 0
-
-
     return True
-
-
 
 
 ####Check if space can have a queen in it
 def invalid(b, ans):
     row,col = ans
 
-    # check row
-    # for num in b[row]:
-    #     if num == 1:
-    #         return True
-
     # check column
     for x in b:
         if x[col] == 1:
                 return True
+
     ##### check diagonal #####
     #check if point is top left
     if row == 0 and col == 0:
@@ -104,42 +91,39 @@ def invalid(b, ans):
         for _ in range(1,8):
             if b[_][y] == 1:
                 return True
-
             y += 1
+
     #point top right of board
     if row == 0 and col == 7:
         y = 6
         for _ in range(1,8):
             if b[_][y] == 1:
                 return True
-
             y -= 1
+
     #bottom right of board
-    if row and col == 7:
+    if row == 7 and col == 7:
         y = 6
         for _ in range(6,-1,-1):
             if b[_][y] == 1:
                 return True
-
             y -= 1
-    #bottom left
 
+    #bottom left
     if row == 7 and col == 0:
         y = 1
         for _ in range(6,-1,-1):
             if b[_][y] == 1:
                 return True
-
             y += 1
 
     if row == 0:
         if downwards_diagonals(b,col):
             return True
 
-
-    if row == 7:
-        if upwards_diagonals(b,col):
-            return True
+    # if row == 7:
+    #     if upwards_diagonals(b,col):
+    #         return True
 
     ##Going row by row, checking upwards and downwards diagonals.
     upwards = row-1
@@ -147,17 +131,13 @@ def invalid(b, ans):
         if upwards_diagonals(b, col,lowest=upwards):
             return True
 
-
     downwards = row+1
     if downwards != 7:
-
         if downwards_diagonals(b, col,highest=downwards):
             return True
 
     return False
 
-
-####use variables to span out for the diagonal search.####
 
 #seeks diagonals going up
 def upwards_diagonals(b, column, lowest=6):
@@ -205,8 +185,6 @@ def downwards_diagonals(b, column, highest=1):
         return False
 
 
-
-
 def find(b):
     for x in range(7,-1,-1):
         for y in range(7,-1,-1):
@@ -214,10 +192,10 @@ def find(b):
                 return (x,y)
 
 
-
 def print_board(b):
     for row in b:
         print(row)
+
 
 solve(board,0)
 print_board(board)
