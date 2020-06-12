@@ -6,6 +6,8 @@ class Program(tk.Frame):
     def __init__(self,parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
+
+        ##Draw chessboard
         row, col = 0, 0
         background = 'brown'
         for x in range(8):

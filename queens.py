@@ -72,10 +72,6 @@ def invalid(b, ans):
         if x[col] == 1:
             return True
 
-    if row == 7:
-        if upwards_diagonals1(b,col):
-            return True
-
     ##row by row, checks upwards and downwards diagonal spaces.
     upwards = row-1
     #checks if the row is the first one
@@ -92,22 +88,22 @@ def invalid(b, ans):
     return False
 
 
-def upwards_diagonals1(b, column, lowest=6):
-        #variables will count both to right and to left
-        r_bound = column+1
-        l_bound = column-1
-        #count rows moving upwards starting at the row above current
-        for _ in range(lowest,-1,-1):
-            if r_bound < 7:
-                if b[_][r_bound] == 1:
-                    return True
-
-            r_bound += 1
-            if l_bound > -1:
-                if b[_][l_bound] == 1:
-                    return True
-            l_bound -= 1
-        return False
+# def upwards_diagonals1(b, column, lowest=6):
+#         #variables will count both to right and to left
+#         r_bound = column+1
+#         l_bound = column-1
+#         #count rows moving upwards starting at the row above current
+#         for _ in range(lowest,-1,-1):
+#             if r_bound < 7:
+#                 if b[_][r_bound] == 1:
+#                     return True
+#
+#             r_bound += 1
+#             if l_bound > -1:
+#                 if b[_][l_bound] == 1:
+#                     return True
+#             l_bound -= 1
+#         return False
 
 def upwards_diagonals(b, column, lowest=6):
         #variables will count both to right and to left
