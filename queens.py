@@ -23,7 +23,9 @@ def solve(b,r):
     global neg
     global top_row
 
-
+    queen_total = 0
+    for row in b:
+        queen_total += row.count(1)
 
     #Iterating through board.
     for _ in range(8):
@@ -41,20 +43,14 @@ def solve(b,r):
                     else:
                         neg.remove(item)
                     #check for base case
-                queen_total = 0
-                for row in b:
-                    queen_total += row.count(1)
+                if queen_total == 7:
+                    print("queen is 7")
+                queen_total += 1
                 if queen_total == 8:
                     print("Correct amount of queens")
                     print_board(b)
                     print("Nice one!")
                     return True
-                if queen_total == 7:
-                    print('\n')
-                    print_board(b)
-                    print('\n')
-                    print(r, " r is this")
-
 
                 r += 1
                 solve(b,r)
@@ -121,9 +117,6 @@ def invalid(b, ans):
         if downwards_diagonals(b,col):
             return True
 
-    # if row == 7:
-    #     if upwards_diagonals(b,col):
-    #         return True
 
     ##Going row by row, checking upwards and downwards diagonals.
     upwards = row-1
@@ -150,14 +143,13 @@ def upwards_diagonals(b, column, lowest=6):
                 if b[_][r_bound+1] == 1:
                     return True
             except:
-                pass
+                continue
             r_bound += 1
-        for _ in range(lowest,-1,-1):
             try:
                 if b[_][l_bound-1] == 1:
                     return True
             except:
-                pass
+                continue
             l_bound -= 1
         return False
 
