@@ -1,4 +1,5 @@
 import tkinter as tk
+import time
 
 import threading
 
@@ -32,9 +33,9 @@ class Program:
                 # var =  "var" + str(row)+str(col)
                 var = tk.StringVar()
                 self.vars.append(var)
-                self.row = tk.Label(self.parent,padx=25,pady=25,
-                            relief="groove",background=background,
-                                textvariable=var)
+                self.row = tk.Label(self.parent,width=11,pady=25,
+                                    relief="groove",background=background,
+                                    textvariable=var,font="bold")
                 self.row.grid(row=row,column=col)
                 col += 1
                 if background == 'brown':
@@ -49,14 +50,13 @@ class Program:
             row += 1
 
         self.state = tk.Button(self.parent,text="Start",
-command = self.start_solving)
+                               command = self.start_solving)
         self.state.grid(row=9,column=4)
 
 
     def start_solving(self):
         print("Start solving")
         self.solve(board,0)
-        self.print_board(board)
 
 
     def place_queens(self,*args):
@@ -66,49 +66,24 @@ command = self.start_solving)
         z = 0
         background = 'brown'
         l = args[0]
-        for item,z in enumerate(vars):
-            index_ = str(vars[z])
-            if index_[6:] in l:
-                print("Yes ", index_[6:])
 
-        for x in range(8):
-            for y in range(8):
-                self.var = tk.StringVar()
-                # self.row = tk.Label(self.parent,padx=17,pady=25,
-                # relief="groove",background=background, font="bold"
-                # ,textvariable=self.var)
-                if (x,y) in l:
-                    self.row = tk.Label(self.parent, text="Q",
-                    padx=17,pady=25,relief="groove",background=background,
-                    font="bold",textvariable="Q")
-                    # var[]
-                self.row.grid(row=row,column=col)
-                col += 1
-                if background == 'brown':
-                    background = 'white'
-                else:
-                    background = 'brown'
-            if background == 'brown':
-                background = 'white'
+        for item in self.vars:
+            index_ = str(item)
+            #Start at 6 to get the index of the variable eg. PYVAR01
+            if index_[6:] in l:
+                item.set("Q")
             else:
-                background = 'brown'
-            col = 0
-            row += 1
+                item.set("")
+        time.sleep(.4)
         self.parent.update()
 
 
     def solve(self, b, r):
-        print("Running")
         this = str(self.vars[9])
-        if this[6:] == str(9):
-            print("Yes")
-        print(this[6:])
 
         global XZ
         global NEG
         queen_total = 0
-
-        self.place_queens(self.queen_points(b))
 
         for row in b:
             queen_total += row.count(1)
@@ -128,11 +103,10 @@ command = self.start_solving)
                             NEG.remove(item)
 
                     r += 1
-                    if (queen_total + 1) == 8:
-                        print("Yes it's true")
-                        self.print_board(b)
-                        print("________________________\n")
+                    self.place_queens(self.queen_points(b))
 
+                    if (queen_total + 1) == 8:
+                        self.print_board(b)
                         return True
                     return self.solve(b,r)
 
@@ -226,13 +200,14 @@ command = self.start_solving)
 
 
     def queen_points(self, b):
+        #Returns the spaces containing a queen
         count = []
         x=0
         for row in range(8):
             for col in range(8):
                 if b[row][col] == 1:
-                    # count.append((row,col))
-                    count.append(x)
+                    count.append(str(x))
+                x += 1
         return count
 
     def print_board(self,b):
