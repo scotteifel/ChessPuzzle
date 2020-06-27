@@ -13,16 +13,14 @@ board = [
           [0,0,0,0,0,0,0,0],
           [0,0,0,0,0,0,0,0],
 ]
-global NEG
-global XZ
-NEG = []
-XZ = 0
 
 class Program:
     def __init__(self,parent):
 
         self.parent = parent
         self.vars = []
+        self.NEG = []
+        self.XZ = 0
         row, col = 0, 0
         background = 'brown'
 
@@ -52,12 +50,13 @@ class Program:
                                command = self.start_solving)
         self.state.grid(row=10,column=3, columnspan=2)
 
-
     #A new function is created to pass in 0 for first iteration
     def start_solving(self):
         self.solve(board,0)
         ok = messagebox.askokcancel(
         message="Complete")
+
+
 
     def place_queens(self,*args):
 
@@ -71,7 +70,9 @@ class Program:
             index_ = str(item)
             #Start at 6 to get the index of the variable eg. PYVAR01
             if index_[6:] in l:
-                item.set("Q")
+                img = tk.PhotoImage(file = "ChessQueen - Copy.png")
+                # item.set("Q")
+                item["image"] = img
             else:
                 item.set("")
         time.sleep(.4)
@@ -79,8 +80,6 @@ class Program:
 
 
     def solve(self, b, r):
-        global XZ
-        global NEG
         queen_total = 0
 
         for row in b:
@@ -90,15 +89,15 @@ class Program:
 
             if not self.invalid(b, (r,_)):
 
-                if (r,_) not in NEG:
+                if (r,_) not in self.NEG:
                     b[r][_] = 1
 
-                    ##clear attempts except for the lowest row.
-                    for item in NEG:
+                    ##clear attempts except for row 0.
+                    for item in self.NEG:
                         if item[0] <= r:
                             continue
                         else:
-                            NEG.remove(item)
+                            self.NEG.remove(item)
 
                     r += 1
                     self.place_queens(self.queen_points(b))
@@ -109,19 +108,19 @@ class Program:
                     return self.solve(b,r)
 
         if r == 0:
-            NEG.append((0,XZ))
-            XZ += 1
+            self.NEG.append((0,self.XZ))
+            self.XZ += 1
             #resetting all rows but the first one
             #to allow any space for a queen
             return self.solve(b,0)
         else:
             x,y = self.find(b)
             b[x][y] = 0
-            NEG.append((x,y))
+            self.NEG.append((x,y))
             return self.solve(b,x)
 
 
-    ####Check to see if a space can have a queen in it
+    ####Check to see if a space can have a queen
     def invalid(self, b, ans):
         row,col = ans
 
@@ -187,5 +186,4 @@ root = tk.Tk()
 root.title("8 Queens")
 
 app = Program(root)
-
 root.mainloop()
