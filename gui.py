@@ -2,7 +2,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import time
-
+from PIL import Image, ImageTk
 board = [
           [0,0,0,0,0,0,0,0],
           [0,0,0,0,0,0,0,0],
@@ -19,8 +19,13 @@ class Program:
 
         self.parent = parent
         self.vars = []
-        self.NEG = []
+        self.attempts = []
+        self.placed_queens = []
         self.XZ = 0
+        img = Image.open('Chessqueen111.png')
+        self.img = ImageTk.PhotoImage(img)
+
+        queen_index = ""
         row, col = 0, 0
         background = 'brown'
 
@@ -29,12 +34,13 @@ class Program:
 
                 var = tk.StringVar()
                 self.vars.append(var)
-                self.row = tk.Label(self.parent,width=11,pady=25,
-                                    relief="groove",background=background,
-                                    textvariable=var,font="bold")
+                self.row = tk.Label(self.parent,width=11,pady=30,
+relief="groove",background=background,textvariable=var,font="bold")
+
                 self.row.grid(row=row,column=col)
                 col += 1
-                #Draws the chessboard
+
+            #Draw the chessboard
                 if background == 'brown':
                     background = 'white'
                 else:
@@ -50,57 +56,40 @@ class Program:
                                command = self.start_solving)
         self.state.grid(row=10,column=3, columnspan=2)
 
+
     #A new function is created to pass in 0 for first iteration
     def start_solving(self):
         self.solve(board,0)
         ok = messagebox.askokcancel(
         message="Complete")
 
-
-
-    def place_queens(self,*args):
-
-        #Draw chessboard
-        row, col = 0, 0
-        z = 0
-        background = 'brown'
-        l = args[0]
-
-        for item in self.vars:
-            index_ = str(item)
-            #Start at 6 to get the index of the variable eg. PYVAR01
-            if index_[6:] in l:
-                img = tk.PhotoImage(file = "ChessQueen - Copy.png")
-                # item.set("Q")
-                item["image"] = img
-            else:
-                item.set("")
-        time.sleep(.4)
-        self.parent.update()
-
-
     def solve(self, b, r):
+        self.parent.update()
+        time.sleep(.3)
         queen_total = 0
 
         for row in b:
             queen_total += row.count(1)
-
+        #Iterate through a row to find a space for the queen
         for _ in range(8):
 
             if not self.invalid(b, (r,_)):
 
-                if (r,_) not in self.NEG:
+                if (r,_) not in self.attempts:
                     b[r][_] = 1
 
                     ##clear attempts except for row 0.
-                    for item in self.NEG:
+                    for item in self.attempts:
                         if item[0] <= r:
                             continue
                         else:
-                            self.NEG.remove(item)
-
+                            self.attempts.remove(item)
+                    #Get a new variable for each placed queen on gui
+                    queen_index = "queen"+str(r)
+                    queen_index = tk.Label(self.parent, image=self.img)
+                    queen_index.grid(row=r,column=_)
+                    self.placed_queens.append(queen_index)
                     r += 1
-                    self.place_queens(self.queen_points(b))
 
                     if (queen_total + 1) == 8:
                         self.print_board(b)
@@ -108,17 +97,20 @@ class Program:
                     return self.solve(b,r)
 
         if r == 0:
-            self.NEG.append((0,self.XZ))
+            self.attempts.append((0,self.XZ))
             self.XZ += 1
-            #resetting all rows but the first one
+            self.placed_queens[0].destroy()
+            #resetting all tried spaces but the first rows
             #to allow any space for a queen
             return self.solve(b,0)
+
         else:
             x,y = self.find(b)
             b[x][y] = 0
-            self.NEG.append((x,y))
+            self.attempts.append((x,y))
+            self.placed_queens[-1].destroy()
+            self.placed_queens.pop()
             return self.solve(b,x)
-
 
     ####Check to see if a space can have a queen
     def invalid(self, b, ans):
@@ -131,20 +123,13 @@ class Program:
 
         #checks if the row is the first one
         if row != 0:
+
             #count the rows moving upwards starting
             #on the above row
-            if self.upwards_diagonals(b, col,row-1):
-                return True
+            r_bound = col+1
+            l_bound = col-1
 
-        return False
-
-
-    def upwards_diagonals(self, b, column, row):
-            #vars will count to the right and left
-            r_bound = column+1
-            l_bound = column-1
-
-            for _ in range(row,-1,-1):
+            for _ in range(row-1,-1,-1):
                 if r_bound < 8:
                     if b[_][r_bound] == 1:
                         return True
@@ -154,10 +139,11 @@ class Program:
                     if b[_][l_bound] == 1:
                         return True
                 l_bound -= 1
-            return False
+
+        return False
 
 
-    #Finds the furthest down queen on the board and returns it's coords.
+    #find the furthest down queen on the board and returns it's coords.
     def find(self, b):
         for x in range(7,-1,-1):
             for y in range(7,-1,-1):
@@ -166,15 +152,14 @@ class Program:
 
 
     def queen_points(self, b):
-        #Returns the spaces containing a queen
+        #return the coordinates of spaces containing a queen
         count = []
-        x = 0
-
         for row in range(8):
             for col in range(8):
                 if b[row][col] == 1:
-                    count.append(str(x))
-                x += 1
+                #the coords are in a tuple, index is joined for each entry
+                    count.append([(str(row),str(col)),self.queen_index])
+                self.queen_index += 1
         return count
 
     def print_board(self,b):

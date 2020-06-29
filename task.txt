@@ -1,2 +1,7 @@
-Define if a move is valid.  8 queens must be on the board,
-and no queen can be able to attack another one.
+make multiple solutions possible?
+
+take away white background from queen picture.
+
+make board appear in center of screen
+
+fix complete dialog messagebox
