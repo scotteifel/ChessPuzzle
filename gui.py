@@ -1,4 +1,3 @@
-
 import tkinter as tk
 from tkinter import messagebox
 import time
@@ -18,10 +17,11 @@ class Program:
     def __init__(self,parent):
 
         self.parent = parent
+        self.board = board
         self.attempts = []
         self.plotted_queens = []
-        self.XZ = 0
-        img = Image.open('Chessqueen111.png')
+        self.top_cols = 0
+        img = Image.open('chessqueen111.png')
         self.img = ImageTk.PhotoImage(img)
 
         row, col = 0, 0
@@ -56,24 +56,35 @@ relief="groove",background=background)
     #A new function is created to pass in 0 for first iteration
     def start_solving(self):
         self.start['state'] = 'disabled'
-        self.solve(board,0)
+
+        if len(self.plotted_queens) > 0:
+            x,y = self.find()
+            self.board[x][y] = 0
+            self.attempts.append((x,y))
+            self.plotted_queens[-1].destroy()
+            self.plotted_queens.pop()
+            self.solve(7)
+
+        else:
+            self.solve(0)
         ok = messagebox.askokcancel(message="Complete")
+        self.start['state'] = 'normal'
 
 
-    def solve(self, b, r):
+    def solve(self, r):
         self.parent.update()
-        time.sleep(.3)
+        # time.sleep(.03)
         queen_total = 0
 
-        for row in b:
+        for row in self.board:
             queen_total += row.count(1)
         #Iterate through a row to find a space for the queen
         for _ in range(8):
 
-            if not self.invalid(b, (r,_)):
+            if not self.invalid((r,_)):
 
                 if (r,_) not in self.attempts:
-                    b[r][_] = 1
+                    self.board[r][_] = 1
 
                     ##clear attempts except for row 0.
                     for item in self.attempts:
@@ -89,31 +100,34 @@ relief="groove",background=background)
                     r += 1
                     #base case check
                     if (queen_total + 1) == 8:
-                        self.print_board(b)
-
                         return True
-                    return self.solve(b,r)
+                    return self.solve(r)
 
         if r == 0:
-            self.attempts.append((0,self.XZ))
-            self.XZ += 1
-            self.plotted_queens[0].destroy()
-            return self.solve(b,0)
+            self.attempts.append((0,self.top_cols))
+            self.top_cols += 1
+            try:
+                self.plotted_queens[0].destroy()
+            except:
+                ok = messagebox.askokcancel(message="Last solution reached")
+                self.start.configure(text='Quit',command=self.parent.destroy)
+                return True
+            return self.solve(0)
 
         else:
-            x,y = self.find(b)
-            b[x][y] = 0
+            x,y = self.find()
+            self.board[x][y] = 0
             self.attempts.append((x,y))
             self.plotted_queens[-1].destroy()
             self.plotted_queens.pop()
-            return self.solve(b,x)
+            return self.solve(x)
 
     ####Check to see if a space can have a queen
-    def invalid(self, b, ans):
+    def invalid(self,ans):
         row,col = ans
 
         # check column
-        for x in b:
+        for x in self.board:
             if x[col] == 1:
                 return True
 
@@ -127,28 +141,29 @@ relief="groove",background=background)
 
             for _ in range(row-1,-1,-1):
                 if r_bound < 8:
-                    if b[_][r_bound] == 1:
+                    if self.board[_][r_bound] == 1:
                         return True
                 r_bound += 1
 
                 if l_bound > -1:
-                    if b[_][l_bound] == 1:
+                    if self.board[_][l_bound] == 1:
                         return True
                 l_bound -= 1
 
         return False
 
 
-    #find the furthest down queen on the board and returns it's coords.
-    def find(self, b):
+    #find the furthest down queen on the board and returns it's
+    #coordinates.
+    def find(self):
         for x in range(7,-1,-1):
             for y in range(7,-1,-1):
-                if b[x][y] == 1:
+                if self.board[x][y] == 1:
                     return (x,y)
 
-
-    def print_board(self,b):
-        for row in b:
+    #Prints the board to the console.
+    def print_board(self):
+        for row in self.board:
             print(row)
 
 
