@@ -1,0 +1,2 @@
+DARK_BROWN = r'#704815'
+LIGHT_BROWN = r'#f4c586'
