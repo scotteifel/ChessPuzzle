@@ -1,3 +1,5 @@
 make board appear in center of screen
 
 fix complete dialog messagebox
+
+change completed dialogue box so it doesn't have a cancel option
