@@ -88,10 +88,11 @@ class Program:
             self.solve(0)
         ok = messagebox.askokcancel(message="Complete")
         self.start['state'] = 'normal'
+        self.start['text'] = 'Again'
 
     def solve(self, r):
         self.parent.update()
-        time.sleep(.08)
+        time.sleep(.07)
         queen_total = 0
 
         for row in self.board:
