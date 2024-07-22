@@ -86,7 +86,6 @@ class Program:
 
         else:
             self.solve(0)
-        ok = messagebox.showinfo(message="Complete")
         self.start['state'] = 'normal'
         self.start['text'] = 'Next solution'
 
