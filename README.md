@@ -1,7 +1,7 @@
 # ChessPuzzle
-This program uses the backtracking alg. to place queens on a chessboard.
+This program uses the backtracking algorithm to place queens on a chessboard.
 
-The goal is to complete a chessboard containing 8 queens,
-and the queens cannot be able to attack one another.
+The goal is to place 8 queens on a chessboard in a way that they
+cannot attack one another.
 
-To start the app, type gui.py in the terminal.  It can be solved more than once.
+To start the app, type gui.py in the terminal.
