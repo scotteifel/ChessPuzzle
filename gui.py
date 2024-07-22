@@ -86,13 +86,13 @@ class Program:
 
         else:
             self.solve(0)
-        ok = messagebox.askokcancel(message="Complete")
+        ok = messagebox.showinfo(message="Complete")
         self.start['state'] = 'normal'
-        self.start['text'] = 'Again'
+        self.start['text'] = 'Next solution'
 
     def solve(self, r):
         self.parent.update()
-        time.sleep(.07)
+        time.sleep(.037)
         queen_total = 0
 
         for row in self.board:
@@ -194,8 +194,8 @@ class Program:
         for row in self.board:
             print(row)
 
-
 if __name__ == "__main__":
+    print("Starting program.")
     root = tk.Tk()
     root.title("8 Queens")
 
