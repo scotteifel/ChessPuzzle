@@ -19,8 +19,26 @@ board = [
 
 class Program:
     def __init__(self, parent):
+        """
+        Initialize the main window and the chessboard.
+
+        Parameters:
+        parent (tk.Tk): The parent window where the chessboard will be displayed.
+
+        Attributes:
+        parent (tk.Tk): The parent window.
+        board (list): The 8x8 chessboard represented as a 2D list.
+        attempts (list): A list to store the coordinates of the queens that have been attempted to be placed.
+        plotted_queens (list): A list to store the GUI labels representing the queens on the chessboard.
+        top_cols (int): A counter to keep track of the topmost column to start the next attempt.
+        light_squares (list): A list to store the coordinates of the light squares on the chessboard.
+        light_queen (ImageTk.PhotoImage): The image of a light-colored queen.
+        dark_queen (ImageTk.PhotoImage): The image of a dark-colored queen.
+        start (tk.Button): The button to start solving the 8 queens problem.
+        """
 
         self.parent = parent
+        self.parent.title("8 Queens")
         self.board = board
         self.attempts = []
         self.plotted_queens = []
@@ -40,6 +58,12 @@ class Program:
         self.light_queen = ImageTk.PhotoImage(queen_light)
         queen_dark = Image.open('Img/Queen_darker.png')
         self.dark_queen = ImageTk.PhotoImage(queen_dark)
+
+        # Convert the light queen image to an icon image file
+        queen_light.save('light_queen_icon.ico')
+
+        # Set the icon for the taskbar
+        self.parent.wm_iconbitmap('light_queen_icon.ico')
 
         background = DARK_BROWN
         row, col = 0, 0
@@ -67,7 +91,7 @@ class Program:
             row += 1
 
         self.start = tk.Button(self.parent, text="Solve",
-                               command=self.start_solving)
+                            command=self.start_solving)
         self.start.grid(row=10, column=3, columnspan=2, pady=6)
         print(self.light_squares)
 
@@ -87,11 +111,11 @@ class Program:
         else:
             self.solve(0)
         self.start['state'] = 'normal'
-        self.start['text'] = 'Next solution'
+        self.start['text'] = 'Again'
 
     def solve(self, r):
         self.parent.update()
-        time.sleep(.037)
+        time.sleep(.07)
         queen_total = 0
 
         for row in self.board:
@@ -193,8 +217,8 @@ class Program:
         for row in self.board:
             print(row)
 
+
 if __name__ == "__main__":
-    print("Starting program.")
     root = tk.Tk()
     root.title("8 Queens")
 
