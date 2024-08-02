@@ -95,9 +95,8 @@ class Program:
         self.start.grid(row=10, column=3, columnspan=2, pady=6)
         print(self.light_squares)
 
-    # A new function is created to pass in 0 for first iteration
-
-    def start_solving(self):
+  
+    def start_solving(self):   # A new function is created to pass in 0 for first iteration
         self.start['state'] = 'disabled'
         # This is triggered if it is not the first attempt to solve.
         if len(self.plotted_queens) > 0:
@@ -111,11 +110,11 @@ class Program:
         else:
             self.solve(0)
         self.start['state'] = 'normal'
-        self.start['text'] = 'Again'
+        self.start['text'] = 'Solve again'
 
     def solve(self, r):
         self.parent.update()
-        time.sleep(.07)
+        time.sleep(.02)
         queen_total = 0
 
         for row in self.board:
@@ -161,7 +160,11 @@ class Program:
             try:
                 self.plotted_queens[0].destroy()
             except:
-                ok = messagebox.askokcancel(message="Last solution reached")
+                ok = messagebox.askokcancel(message="Last solution reached.  Click OK to continue or cancel to quit.")
+                if ok:
+                    pass
+                else:
+                    root.destroy()
                 self.start.configure(text='Quit', command=self.parent.destroy)
                 return True
             return self.solve(0)
@@ -174,8 +177,8 @@ class Program:
             self.plotted_queens.pop()
             return self.solve(x)
 
-    # Check to see if a space can have a queen
-    def invalid(self, ans):
+
+    def invalid(self, ans):    # Check to see if a space can have a queen
         row, col = ans
 
         # Check column
@@ -204,7 +207,7 @@ class Program:
 
         return False
 
-    # find the furthest down queen on the board and returns it's
+    # Find the furthest down queen on the board and returns it's
     # coordinates.
     def find(self):
         for x in range(7, -1, -1):
@@ -212,7 +215,7 @@ class Program:
                 if self.board[x][y] == 1:
                     return (x, y)
 
-    # Prints the board to the console.
+    # Print the board to the console.
     def print_board(self):
         for row in self.board:
             print(row)
